@@ -2,6 +2,10 @@ package recfun
 
 import common._
 
+/**
+ * 三个练习都是在验证某一个属性(理论)是否成立, immutable的重要性
+ *
+ */
 object Main {
   def main(args: Array[String]) {
     println("Pascal's Triangle")
@@ -19,6 +23,7 @@ object Main {
    * if col == 0 -> 1
    * if row == 0 -> 1
    * if row == col -> 1
+   *
    */
   def pascal(c: Int, r: Int): Int = c match {
     case 0 => 1
@@ -28,6 +33,8 @@ object Main {
 
   /**
    * Exercise 2
+   * 不用一个count变量来跟踪'('的个数，而是使用了递归方法 
+   *
    */
   def balance(chars: List[Char]): Boolean = {
     /**
@@ -35,6 +42,7 @@ object Main {
      * @param part: List[Char] a List of Char
      * @param num: Int current continuous '(' number
      * @return Boolean
+
      */
     def balanceWithLeftNum(part: List[Char], num: Int): Boolean = {
       assert(num >= 0)
