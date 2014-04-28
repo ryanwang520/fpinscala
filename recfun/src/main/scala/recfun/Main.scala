@@ -33,7 +33,7 @@ object Main {
 
   /**
    * Exercise 2
-   * 不用一个count变量来跟踪'('的个数，而是使用了递归方法 
+   * 不用一个count变量来跟踪'('的个数，而是使用了递归方法
    *
    */
   def balance(chars: List[Char]): Boolean = {
