@@ -1,2 +1,2 @@
-完成Coursera Functional Programming in Scala 的Assignment
+Coursera Functional Programming in Scala Assignments
 =========
