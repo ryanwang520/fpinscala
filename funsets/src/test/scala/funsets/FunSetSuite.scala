@@ -77,6 +77,7 @@ class FunSetSuite extends FunSuite {
     val s1 = singletonSet(1)
     val s2 = singletonSet(2)
     val s3 = singletonSet(3)
+    val s4 = union(s1,s2)
   }
 
   /**
@@ -86,7 +87,7 @@ class FunSetSuite extends FunSuite {
    * Once you finish your implementation of "singletonSet", exchange the
    * function "ignore" by "test".
    */
-  ignore("singletonSet(1) contains 1") {
+  test("singletonSet(1) contains 1") {
     
     /**
      * We create a new instance of the "TestSets" trait, this gives us access
@@ -98,15 +99,65 @@ class FunSetSuite extends FunSuite {
        * the test fails. This helps identifying which assertion failed.
        */
       assert(contains(s1, 1), "Singleton")
+      assert(contains(s2, 2),"Singleton")
+      assert(!contains(s1,2),"Singleton")
     }
   }
 
-  ignore("union contains all elements") {
+  test("union contains all elements") {
     new TestSets {
       val s = union(s1, s2)
       assert(contains(s, 1), "Union 1")
       assert(contains(s, 2), "Union 2")
       assert(!contains(s, 3), "Union 3")
+    }
+  }
+  test("intersect contains elems in both sets"){
+    new TestSets{
+      val s = intersect(s1, s4)
+      assert(contains(s,1), "intersect")
+      assert(!contains(s,2),"intersect")
+    }
+  }
+  test("diff contains elems not in both sets"){
+    new TestSets{
+      val s = diff(s1, s4)
+      assert(contains(s,2), "intersect")
+      assert(!contains(s,1),"intersect")
+    }
+  }
+  test("filter set"){
+    new TestSets{
+
+      assert(contains(filter(s4,x=> x>1),2), "intersect")
+      assert(!contains(filter(s4,x=> x>1),1), "intersect")
+
+    }
+  }
+  test("for all"){
+    new TestSets {
+      val s5 = union(union(s1,s2),s3)
+      val s6 = union(s5,singletonSet(-5))
+      assert(!forall(s6, x=>x>0),"as -5 <0 ,not true")
+      assert(forall(s6,x => x < 10), "all < 10 is true")
+
+    }
+  }
+  test("exists") {
+    new TestSets {
+      val s5 = union(union(s1, s2), s3)
+      val s6 = union(s5, singletonSet(-5))
+      assert(exists(s6, x => x > 0), "as 1>0  true")
+      assert(!exists(s6, x => x == 10), "all < 10  false")
+
+    }
+  }
+  test("map") {
+    new TestSets {
+      val s5 = union(union(s1, s2), s3) //1,2,3
+      assert(map(s5, x=> x*2)(4), "4 in s5 * 2")
+      assert(!map(s5, x=> x*2)(5),"5 not in s5 * 2")
+
     }
   }
 }
