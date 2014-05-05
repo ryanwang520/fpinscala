@@ -122,7 +122,7 @@ class FunSetSuite extends FunSuite {
   test("diff contains elems not in both sets"){
     new TestSets{
       val s = diff(s1, s4)
-      assert(contains(s,2), "intersect")
+      assert(!contains(s,2), "intersect")
       assert(!contains(s,1),"intersect")
     }
   }
