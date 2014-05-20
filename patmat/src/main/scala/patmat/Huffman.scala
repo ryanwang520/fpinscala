@@ -1,6 +1,5 @@
 package patmat
 
-import common._
 import scala.annotation.tailrec
 
 /**
@@ -31,9 +30,6 @@ object Huffman {
     def contains(ch: Char): Boolean = char == ch
   }
 
-
-  // Part 1: Basics
-
   def weight(tree: CodeTree): Int = tree match {
     case Fork(_, _, _, weight) => weight
     case Leaf(_, weight) => weight
@@ -41,7 +37,7 @@ object Huffman {
 
   def chars(tree: CodeTree): List[Char] = tree match {
     case Fork(_, _, chars, _) => chars
-    case Leaf(char, _w) => List(char)
+    case Leaf(char, _) => List(char)
   }
 
   def makeCodeTree(left: CodeTree, right: CodeTree) =
@@ -84,7 +80,9 @@ object Huffman {
    * println("integer is  : "+ theInt)
    * }
    */
-  def times(chars: List[Char]): List[(Char, Int)] = chars.groupBy(c => c).toList.map {
+  def identity(x: Char) = x
+
+  def times(chars: List[Char]): List[(Char, Int)] = chars.groupBy(identity).toList.map {
     case (char, iters) => (char, iters.size)
   }
 
@@ -95,7 +93,7 @@ object Huffman {
    * head of the list should have the smallest weight), where the weight
    * of a leaf is the frequency of the character.
    */
-  def makeOrderedLeafList(freqs: List[(Char, Int)]): List[Leaf] = freqs.sortWith(_._2 < _._2).map {
+  def makeOrderedLeafList(freqs: List[(Char, Int)]): List[Leaf] = freqs.sortBy(_._2).map {
     case (char, num) => Leaf(char, num)
   }
 
@@ -122,7 +120,7 @@ object Huffman {
     case first :: second :: rest =>
       val combined = makeCodeTree(first, second)
       val unsorted = combined :: rest
-      unsorted.sortWith(weight(_) < weight(_))
+      unsorted.sortBy(weight)
   }
 
   /**
@@ -164,6 +162,8 @@ object Huffman {
   // Part 3: Decoding
 
   type Bit = Int
+  val leftEncode = 0
+  val rightEncode = 1
 
   /**
    * This function decodes the bit sequence `bits` using the code tree `tree` and returns
@@ -175,9 +175,9 @@ object Huffman {
       node match {
         case Fork(left, right, _, _) => rest match {
           case Nil => acc.reverse
-          case head :: tail => if (head == 1) decode_iter(right, acc, rest.tail) else decode_iter(left, acc, rest.tail)
+          case head :: tail => if (head == rightEncode) decode_iter(right, acc, rest.tail) else decode_iter(left, acc, rest.tail)
         }
-        case Leaf(char, weight) => decode_iter(tree, char :: acc, rest)
+        case Leaf(char, _) => decode_iter(tree, char :: acc, rest)
       }
     decode_iter(tree, Nil, bits)
   }
@@ -191,7 +191,7 @@ object Huffman {
 
   /**
    * What does the secret message say? Can you decode it?
-   * For the decoding use the `frenchCode' Huffman tree defined above.
+   * For the decoding use the 'frenchCode' Huffman tree defined above.
    */
   val secret: List[Bit] = List(0, 0, 1, 1, 1, 0, 1, 0, 1, 1, 1, 0, 0, 1, 1, 0, 1, 0, 0, 1, 1, 0, 1, 0, 1, 1, 0, 0, 1, 1, 1, 1, 1, 0, 1, 0, 1, 1, 0, 0, 0, 0, 1, 0, 1, 1, 1, 0, 0, 1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1)
 
@@ -213,8 +213,8 @@ object Huffman {
       node match {
         case Fork(left, right, _, _) => rest match {
           case Nil => acc.reverse
-          case head :: tail => if (left.contains(rest.head)) encode_iter(left, 0 :: acc, rest)
-          else encode_iter(right, 1 :: acc, rest)
+          case head :: tail => if (left.contains(rest.head)) encode_iter(left, leftEncode :: acc, rest)
+          else encode_iter(right, rightEncode :: acc, rest)
         }
         case Leaf(char, weight) => encode_iter(tree, acc, rest.tail)
       }
@@ -248,10 +248,10 @@ object Huffman {
     case Leaf(char, _) => List((char, Nil))
     case Fork(left, right, _, _) =>
       val l = convert(left).map {
-        case (char, bits) => (char, 0 :: bits)
+        case (char, bits) => (char, leftEncode :: bits)
       }
       val r = convert(right).map {
-        case (char, bits) => (char, 1 :: bits)
+        case (char, bits) => (char, rightEncode :: bits)
       }
       mergeCodeTables(l, r)
   }
