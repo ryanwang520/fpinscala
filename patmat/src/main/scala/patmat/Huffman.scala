@@ -143,7 +143,7 @@ object Huffman {
    */
   def until(single: List[CodeTree] => Boolean, comb: List[CodeTree] => List[CodeTree])(trees: List[CodeTree]): List[CodeTree] = trees match {
     case t if single(t) => t
-    case head :: tail => comb(trees)
+    case head :: tail => until(single, comb)(comb(trees))
   }
 
   /**
@@ -154,7 +154,9 @@ object Huffman {
    */
   def createCodeTree(chars: List[Char]): CodeTree = {
     val leafs = makeOrderedLeafList(times(chars))
-    until(singleton, combine)(leafs).head
+    if (leafs.isEmpty) throw new NoSuchElementException("cannot careate tree based on empty leaf")
+    else
+      until(singleton, combine)(leafs).head
   }
 
 
