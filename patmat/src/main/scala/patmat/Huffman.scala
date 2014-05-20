@@ -1,6 +1,7 @@
 package patmat
 
 import common._
+import scala.annotation.tailrec
 
 /**
  * Assignment 4: Huffman coding
@@ -143,7 +144,7 @@ object Huffman {
    */
   def until(single: List[CodeTree] => Boolean, comb: List[CodeTree] => List[CodeTree])(trees: List[CodeTree]): List[CodeTree] = trees match {
     case t if single(t) => t
-    case head :: tail => until(single, comb)(comb(trees))
+    case _ => until(single, comb)(comb(trees))
   }
 
   /**
@@ -169,6 +170,7 @@ object Huffman {
    * the resulting list of characters.
    */
   def decode(tree: CodeTree, bits: List[Bit]): List[Char] = {
+    @tailrec
     def decode_iter(node: CodeTree, acc: List[Char], rest: List[Bit]): List[Char] =
       node match {
         case Fork(left, right, _, _) => rest match {
@@ -206,6 +208,7 @@ object Huffman {
    * into a sequence of bits.
    */
   def encode(tree: CodeTree)(text: List[Char]): List[Bit] = {
+    @tailrec
     def encode_iter(node: CodeTree, acc: List[Bit], rest: List[Char]): List[Bit] =
       node match {
         case Fork(left, right, _, _) => rest match {
