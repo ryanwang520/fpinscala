@@ -22,9 +22,12 @@ import common._
      inside the terrain)
  * - `T` denotes the final position of the block (which is also considered
      inside the terrain)
- * 
+ * 只有--的行就忽略掉
  * In this example, the first and last lines could be omitted, and
  * also the columns that consist of `-` characters only.
+ *字符串表示的地图范围，继承GameDef类，GameDef定义了地图的必须属性
+ * level 地图的关卡
+ * 
  */
 trait StringParserTerrain extends GameDef {
 
@@ -52,9 +55,15 @@ trait StringParserTerrain extends GameDef {
    * a valid position (not a '-' character) inside the terrain described
    * by `levelVector`.
    */
-  def terrainFunction(levelVector: Vector[Vector[Char]]): Pos => Boolean = ???
+//  def terrainFunction(levelVector: Vector[Vector[Char]]): Pos => Boolean = {
+//    (pos: Pos) =>  pos.x >= 0 && pos.y >=0 && pos.x < levelVector.length && pos.y < levelVector(0).length &&
+//      (levelVector(pos.x))(pos.y) != '-'    
+//  }
+    def terrainFunction(levelVector: Vector[Vector[Char]]): Pos => Boolean = 
+    p => levelVector.isDefinedAt(p.x) && levelVector(p.x).isDefinedAt(p.y) && levelVector(p.x)(p.y) != '-'
 
-  /**
+
+  /**x
    * This function should return the position of character `c` in the
    * terrain described by `levelVector`. You can assume that the `c`
    * appears exactly once in the terrain.
@@ -62,7 +71,13 @@ trait StringParserTerrain extends GameDef {
    * Hint: you can use the functions `indexWhere` and / or `indexOf` of the
    * `Vector` class
    */
-  def findChar(c: Char, levelVector: Vector[Vector[Char]]): Pos = ???
+  def findChar(c: Char, levelVector: Vector[Vector[Char]]): Pos = {
+   val x =  levelVector.indexWhere(charVector => charVector.exists(char => char == c))
+   val y = levelVector(x).indexOf(c)
+   Pos(x, y)
+  }
+  
+    
 
   private lazy val vector: Vector[Vector[Char]] =
     Vector(level.split("\n").map(str => Vector(str: _*)): _*)
